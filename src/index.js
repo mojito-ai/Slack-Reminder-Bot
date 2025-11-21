@@ -1,7 +1,8 @@
 require("dotenv").config();
 
 // Starts tiny HTTP server (required by AWS App Runner)
-require("./http/healthcheck");
+const { startHttpServer } = require("./healthcheck");
+startHttpServer();
 
 const app = require("./app");
 
