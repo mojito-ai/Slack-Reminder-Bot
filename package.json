@@ -4,7 +4,8 @@
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "build": "echo 'no build required'"
   },
   "dependencies": {
     "@slack/bolt": "^3.17.1",
