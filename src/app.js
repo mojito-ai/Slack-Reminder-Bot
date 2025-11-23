@@ -1,16 +1,16 @@
-const { App } = require("@slack/bolt");
 require("dotenv").config();
+const { App, ExpressReceiver } = require("@slack/bolt");
 
-const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
-const SLACK_APP_TOKEN = process.env.SLACK_APP_TOKEN;
-
-const app = new App({
-  token: SLACK_BOT_TOKEN,
-  appToken: SLACK_APP_TOKEN,
-  socketMode: true
+// Create Express receiver
+const receiver = new ExpressReceiver({
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
-// Register event handlers
-require("./events/messageHandler")(app);
+// Create Bolt app in HTTP mode
+const app = new App({
+  token: process.env.SLACK_BOT_TOKEN,
+  receiver,                     // <= use ExpressReceiver
+  socketMode: false,
+});
 
-module.exports = app;
+module.exports = { app, receiver };

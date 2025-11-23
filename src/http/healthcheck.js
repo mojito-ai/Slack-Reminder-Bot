@@ -1,7 +1,7 @@
 const http = require("http");
 
 function startHttpServer() {
-  const port = process.env.PORT || 3000;
+  const port = process.env.HEALTHCHECK_PORT || 3001; // change default port
 
   const server = http.createServer((req, res) => {
     if (req.url === "/health") {
@@ -15,6 +15,10 @@ function startHttpServer() {
 
   server.listen(port, () => {
     console.log(`Healthcheck server running on port ${port}`);
+  });
+
+  server.on("error", (err) => {
+    console.error("HTTP server error:", err);
   });
 }
 

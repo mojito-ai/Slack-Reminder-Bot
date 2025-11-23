@@ -7,7 +7,7 @@ RUN npm install --production
 
 COPY . .
 
-# App Runner expects a listening port
 ENV PORT=3000
+EXPOSE 3000
 
 CMD ["npm", "start"]
