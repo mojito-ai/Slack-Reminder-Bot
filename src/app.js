@@ -4,6 +4,7 @@ const { App, ExpressReceiver } = require("@slack/bolt");
 // Create Express receiver
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
+  endpoints: "/slack/events",
 });
 
 // Create Bolt app in HTTP mode
