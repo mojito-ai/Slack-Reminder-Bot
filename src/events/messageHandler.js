@@ -5,7 +5,6 @@ const CHANNEL_B = process.env.CHANNEL_B;
 
 module.exports = function registerMessageHandler(app) {
   app.event("message", async ({ event, client, logger }) => {
-    console.log("MESSAGE EVENT RECEIVED:", event);
 
     // Ignore bot messages, edits, file uploads
     if (event.subtype || event.bot_id) return;
