@@ -1,16 +1,16 @@
 require("dotenv").config();
 const { App, ExpressReceiver } = require("@slack/bolt");
 
-// Create Express receiver
+// ExpressReceiver for HTTP mode
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
-  endpoints: "/slack/events",
+  endpoints: "/slack/events",   // Slack events endpoint
 });
 
-// Create Bolt app in HTTP mode
+// Bolt App
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
-  receiver,                     // <= use ExpressReceiver
+  receiver,
   socketMode: false,
 });
 

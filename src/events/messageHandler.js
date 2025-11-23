@@ -5,43 +5,38 @@ const CHANNEL_B = process.env.CHANNEL_B;
 
 module.exports = function registerMessageHandler(app) {
   app.event("message", async ({ event, client, logger }) => {
-    // Ignore bot messages, edits, file share events, etc.
-    if (event.subtype) return;
-    if (event.bot_id) return;
+    console.log("MESSAGE EVENT RECEIVED:", event);
 
-    // Only handle events from CHANNEL_A
+    // Ignore bot messages, edits, file uploads
+    if (event.subtype || event.bot_id) return;
+
+    // Only handle messages from CHANNEL_A
     if (event.channel !== CHANNEL_A) return;
 
-    // Ignore thread replies (only forward top-level messages)
-    if (event.thread_ts && event.thread_ts !== event.ts) {
-      return;
-    }
+    // Ignore thread replies
+    if (event.thread_ts && event.thread_ts !== event.ts) return;
 
     const text = event.text || "";
     if (!matchesKeywords(text)) return;
 
-    const user = event.user;
-    const ts = event.ts;
+    console.log(`Forwarding message from ${CHANNEL_A} to ${CHANNEL_B}:`, text);
 
-    // Optional: permalink fetch
     let permalink = null;
     try {
       const resp = await client.chat.getPermalink({
         channel: CHANNEL_A,
-        message_ts: ts,
+        message_ts: event.ts,
       });
       if (resp.ok) permalink = resp.permalink;
     } catch (e) {
-      logger.warn("Failed to get permalink: ", e);
+      logger.warn("Failed to get permalink", e);
     }
 
     const forwardText = [
-      `Forwarded from <#${CHANNEL_A}> by <@${user}>:`,
+      `Forwarded from <#${CHANNEL_A}> by <@${event.user}>:`,
       text.trim(),
-      permalink ? permalink : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
+      permalink || "",
+    ].filter(Boolean).join("\n");
 
     try {
       await client.chat.postMessage({
@@ -49,7 +44,7 @@ module.exports = function registerMessageHandler(app) {
         text: forwardText,
       });
     } catch (e) {
-      logger.error("Failed to forward message: ", e);
+      logger.error("Failed to forward message", e);
     }
   });
 };

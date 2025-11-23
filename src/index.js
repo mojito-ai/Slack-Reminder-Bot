@@ -1,7 +1,10 @@
 require("dotenv").config();
-
 const { app } = require("./app");
 const { startHttpServer } = require("./http/healthcheck");
+const registerMessageHandler = require("./handlers/messageHandler");
+
+// Register handler
+registerMessageHandler(app);
 
 (async () => {
   const port = process.env.PORT || 3000;
