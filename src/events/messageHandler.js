@@ -6,8 +6,16 @@ const CHANNEL_B = process.env.CHANNEL_B;
 module.exports = function registerMessageHandler(app) {
   app.event("message", async ({ event, client, logger }) => {
 
-    // Ignore bot messages, edits, file uploads
-    if (event.subtype || event.bot_id) return;
+    // Ignore bot messages and edits, but allow file/image/video messages
+    if (event.bot_id) return;
+
+    const blockedSubtypes = new Set([
+      "message_changed",  // edits
+      "message_deleted",  // deletions
+      "bot_message"       // bot-injected messages
+    ]);
+
+    if (event.subtype && blockedSubtypes.has(event.subtype)) return;
 
     // Only handle messages from CHANNEL_A
     if (event.channel !== CHANNEL_A) return;
